@@ -1,45 +1,30 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Button } from "@mui/material";
-import useFetch from "../Hooks/use-fetch";
+import React, { useState, useRef } from "react";
+import { Box, Button, TextField } from "@mui/material";
+import { AccountCircle as AccountCircleIcon } from "@mui/icons-material";
 
-import Box from "@mui/material/Box";
-import Input from "@mui/material/Input";
-import InputLabel from "@mui/material/InputLabel";
-import InputAdornment from "@mui/material/InputAdornment";
-import FormControl from "@mui/material/FormControl";
-import TextField from "@mui/material/TextField";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import { wait } from "@testing-library/user-event/dist/utils";
+import useFetch from "../../hooks/use-fetch";
 
 export default function StartQuiz(props) {
-  const { pokemonIdList, submitFinalScore } = props;
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [isRevealing, setIsRevealing] = useState(false);
-  const { pokemonName, isLoading } = useFetch(
-    currentQuestion,
-    pokemonIdList[currentQuestion]
-  );
-  const [score, setScore] = useState(0);
+  const { pokemonIdList, onSubmit } = props;
 
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [score, setScore] = useState(0);
   const inputField = useRef("null");
+  const currentPokemonId = pokemonIdList[currentQuestion];
+  const { pokemonName, isLoading } = useFetch(currentPokemonId);
 
   const handleSubmit = () => {
-    console.log(currentQuestion);
-    setIsRevealing(true);
-    //animation
-    const timer = setTimeout(() => {
-      if (currentQuestion >= 9) {
-        submitFinalScore(score);
-        return;
-      }
-      if (inputField.current.value === pokemonName)
-        setScore((prevScore) => prevScore + 1);
-      setCurrentQuestion((prevQuestion) => prevQuestion + 1);
-      console.log(score);
-      console.log(pokemonName);
-    }, 1000);
+    if (currentQuestion >= 9) {
+      onSubmit(score);
 
-    // clearInterval(timer);
+      return;
+    }
+
+    if (inputField.current.value === pokemonName) {
+      setScore((prevScore) => prevScore + 1);
+    }
+
+    setCurrentQuestion((prevQuestion) => prevQuestion + 1);
   };
 
   return (
@@ -59,7 +44,7 @@ export default function StartQuiz(props) {
             justifyContent: "center",
           }}
         >
-          <AccountCircle sx={{ color: "action.active", mr: 1, my: 0.5 }} />
+          <AccountCircleIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
           <TextField
             inputRef={inputField}
             id="input-with-sx"

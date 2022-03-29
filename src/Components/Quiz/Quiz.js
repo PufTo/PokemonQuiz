@@ -1,21 +1,9 @@
 import React, { useState } from "react";
+
 import EndQuiz from "./EndQuiz";
 import StartQuiz from "./StartQuiz";
 
-// function getRandomInt(min, max) {
-//   min = Math.ceil(min);
-//   max = Math.floor(max);
-//   return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
-// }
-// // TO DO make sure numbers are UNIQUE
-// function generateRandomPokemonNumbers(nrOfPokemon, minID, maxID) {
-//   const initialEmptyArray = Array.from({ length: nrOfPokemon }, () =>
-//     getRandomInt(0, 151)
-//   );
-
-// }
-
-const pokemonNumbers = (numberOfPokemons = 10) => {
+const getPokemonIdList = (numberOfPokemons = 10) => {
   return Array(numberOfPokemons)
     .fill()
     .map(() => Math.round(Math.random() * 151));
@@ -23,19 +11,19 @@ const pokemonNumbers = (numberOfPokemons = 10) => {
 
 export default function Quiz() {
   const [finalScore, setFinalScore] = useState(-1);
-  const updateScore = (newScore) => {
+  const shouldStartQuiz = finalScore === -1;
+
+  const handleSubmit = (newScore) => {
     setFinalScore(newScore);
   };
-  const newQuiz = () => {
+
+  const handleStartQuiz = () => {
     setFinalScore(-1);
   };
-  console.log(finalScore);
-  return finalScore === -1 ? (
-    <StartQuiz
-      pokemonIdList={pokemonNumbers()}
-      submitFinalScore={updateScore}
-    />
+
+  return shouldStartQuiz ? (
+    <StartQuiz pokemonIdList={getPokemonIdList()} onSubmit={handleSubmit} />
   ) : (
-    <EndQuiz startNewQuiz={newQuiz} finalScore={finalScore} />
+    <EndQuiz onStartQuiz={handleStartQuiz} finalScore={finalScore} />
   );
 }
