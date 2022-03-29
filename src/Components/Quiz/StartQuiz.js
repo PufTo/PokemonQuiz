@@ -1,6 +1,10 @@
 import React, { useState, useRef } from "react";
 import { Box, Button, TextField } from "@mui/material";
 import { AccountCircle as AccountCircleIcon } from "@mui/icons-material";
+import CheckIcon from "@mui/icons-material/Check";
+import ClearIcon from "@mui/icons-material/Clear";
+
+import "../../index.css";
 
 import useFetch from "../../hooks/use-fetch";
 
@@ -9,23 +13,39 @@ export default function StartQuiz(props) {
 
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
+  const [answer, setAnswer] = useState({
+    isSubmitted: false,
+    isCorrect: false,
+  });
   const inputField = useRef("null");
   const currentPokemonId = pokemonIdList[currentQuestion];
   const { pokemonName, isLoading } = useFetch(currentPokemonId);
 
+  // console.log("render");
+  console.log(answer);
   const handleSubmit = () => {
+    const isCorrect = inputField.current.value === pokemonName;
+    if (isCorrect) {
+      setScore((prevScore) => prevScore + 1);
+    }
+    setAnswer({ isCorrect: isCorrect, isSubmitted: true });
+  };
+
+  const handleNextQuestion = () => {
     if (currentQuestion >= 9) {
       onSubmit(score);
 
       return;
     }
-
-    if (inputField.current.value === pokemonName) {
-      setScore((prevScore) => prevScore + 1);
-    }
-
+    setAnswer({ isSubmitted: false, isCorrect: false });
     setCurrentQuestion((prevQuestion) => prevQuestion + 1);
   };
+
+  const hide = { display: "none" };
+  const show = { display: "inline-block" };
+
+  const submitButtonVisibility = answer.isSubmitted ? hide : show;
+  const nextButtonVisibility = answer.isSubmitted ? show : hide;
 
   return (
     <div>
@@ -39,23 +59,61 @@ export default function StartQuiz(props) {
 
         <Box
           sx={{
-            display: "flex",
+            display: "block",
             alignItems: "center",
             justifyContent: "center",
           }}
         >
-          <AccountCircleIcon sx={{ color: "action.active", mr: 1, my: 0.5 }} />
+          {answer.isCorrect == true && answer.isSubmitted && (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexWrap: "wrap",
+              }}
+            >
+              <CheckIcon />
+              <span>Good Job</span>
+            </Box>
+          )}
+
+          {answer.isCorrect == false && answer.isSubmitted && (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexWrap: "wrap",
+              }}
+            >
+              <ClearIcon />
+              <span>Wrong</span>
+            </Box>
+          )}
+
           <TextField
             inputRef={inputField}
-            id="input-with-sx"
-            label="With sx"
-            variant="standard"
+            hiddenLabel
+            id="filled-hidden-label-small"
+            variant="filled"
+            size="small"
           />
-
-          <Button variant="contained" onClick={handleSubmit}>
-            Next Pokemon
+          <Button
+            sx={submitButtonVisibility}
+            variant="contained"
+            onClick={handleSubmit}
+          >
+            Submit
           </Button>
-          <p>{pokemonName}</p>
+          <Button
+            sx={nextButtonVisibility}
+            variant="contained"
+            onClick={handleNextQuestion}
+          >
+            Next Question
+          </Button>
+          <p className="font">{pokemonName}</p>
         </Box>
       </Box>
     </div>
