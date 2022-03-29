@@ -1,25 +1,17 @@
 import React from "react";
-import { Button } from "@mui/material";
-
-import Box from "@mui/material/Box";
-import Input from "@mui/material/Input";
-import InputLabel from "@mui/material/InputLabel";
-import InputAdornment from "@mui/material/InputAdornment";
-import FormControl from "@mui/material/FormControl";
-import TextField from "@mui/material/TextField";
-import AccountCircle from "@mui/icons-material/AccountCircle";
+import { Box, Button } from "@mui/material";
 
 export default function EndQuiz(props) {
-  const { startNewQuiz, finalScore } = props;
+  const { onStartQuiz, finalScore } = props;
 
-  const handleStartNewQuiz = () => {
-    startNewQuiz();
+  const handleStartQuiz = () => {
+    onStartQuiz();
   };
 
   return (
     <Box>
       <p>{`score: ${finalScore}`}</p>
-      <Button variant="contained" onClick={handleStartNewQuiz}>
+      <Button variant="contained" onClick={handleStartQuiz}>
         Start a new Quiz!
       </Button>
     </Box>
