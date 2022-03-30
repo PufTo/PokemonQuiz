@@ -1,13 +1,12 @@
 import React, { useState, useRef } from "react";
 
-import { Box, Button, TextField, CircularProgress } from "@mui/material";
-
+import { Box, Button, TextField, CircularProgress, Container } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
-
 import "../../index.css";
 
 import useFetch from "../../hooks/use-fetch";
+import styles from "./StartQuiz.module.css";
 
 export default function StartQuiz(props) {
   const { pokemonIdList, onSubmit } = props;
@@ -50,16 +49,20 @@ export default function StartQuiz(props) {
   const nextButtonVisibility = answer.isSubmitted ? show : hide;
 
   return !isLoading ? (
-    <Box sx={{ "& > :not(style)": { m: 1 } }}>
-      <img src={pokemon.image} alt="Pokemon image"></img>
-      <p>{`${currentQuestion}
-      ${pokemonIdList[currentQuestion]}`}</p>
-
+    <Container sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    }}>
+      <Box className={styles.pokeCard}>
+      <img className={styles.cardImage}src={pokemon.image} alt="Pokemon image"></img>
+      
       <Box
         sx={{
+          width:"80%",
           display: "block",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "center"
         }}
       >
         {answer.isCorrect === true && answer.isSubmitted && (
@@ -71,8 +74,11 @@ export default function StartQuiz(props) {
               flexWrap: "wrap",
             }}
           >
-            <CheckIcon />
-            <span>Good Job</span>
+            
+            <span className={styles.bigText}>
+              <CheckIcon  style={{ fontSize: '2rem' }} />
+              GOOD JOB
+            </span>
           </Box>
         )}
 
@@ -85,36 +91,43 @@ export default function StartQuiz(props) {
               flexWrap: "wrap",
             }}
           >
-            <ClearIcon />
-            <span>Wrong</span>
+            
+            <span className={styles.bigText}>
+              <ClearIcon style={{ fontSize: '2rem' }} />
+              WRONG
+            </span>
           </Box>
         )}
+        
+        <div className={styles.inputContainer}>
+          <TextField
+            inputRef={inputField}
+            hiddenLabel
+            id="filled-hidden-label-small"
+            variant="filled"
+            size="small"
+          />
+          <Button
+            sx={submitButtonVisibility}
+            variant="contained"
+            onClick={handleSubmit}
+          >
+            Submit
+          </Button>
+          <Button
+            sx={nextButtonVisibility}
+            variant="contained"
+            onClick={handleNextQuestion}
+          >
+            Next Question
+          </Button>
+        </div>
 
-        <TextField
-          inputRef={inputField}
-          hiddenLabel
-          id="filled-hidden-label-small"
-          variant="filled"
-          size="small"
-        />
-        <Button
-          sx={submitButtonVisibility}
-          variant="contained"
-          onClick={handleSubmit}
-        >
-          Submit
-        </Button>
-        <Button
-          sx={nextButtonVisibility}
-          variant="contained"
-          onClick={handleNextQuestion}
-        >
-          Next Question
-        </Button>
         <p className="font">{pokemon.name}</p>
-
+          
       </Box>
-    </Box>
+      </Box>
+    </Container>
   ) : (
     <CircularProgress />
   );

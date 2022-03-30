@@ -1,0 +1,32 @@
+
+.pokeCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top:2rem;
+  width: 26rem;
+  border-radius: 20px;
+  border: 10px solid white;
+  padding-bottom: 0.5rem;
+  background: none;
+  
+}
+
+.cardImage {
+  min-width: 34rem;
+}
+
+.inputContainer{
+  display: flex;
+  flex-direction: column;
+}
+
+.bigText {
+  font-size:1.8rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  color:white;
+  margin-bottom:0.5rem;
+}
