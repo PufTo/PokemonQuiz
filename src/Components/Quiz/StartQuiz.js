@@ -1,5 +1,7 @@
 import React, { useState, useRef } from "react";
+
 import { Box, Button, TextField, CircularProgress } from "@mui/material";
+
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 
@@ -20,7 +22,10 @@ export default function StartQuiz(props) {
   const currentPokemonId = pokemonIdList[currentQuestion];
   const { pokemon, isLoading } = useFetch(currentPokemonId);
 
+  // console.log("render");
+  console.log(answer);
   const handleSubmit = () => {
+
     const isCorrect = inputField.current.value === pokemon.name;
     if (isCorrect) {
       setScore((prevScore) => prevScore + 1);
@@ -107,6 +112,7 @@ export default function StartQuiz(props) {
           Next Question
         </Button>
         <p className="font">{pokemon.name}</p>
+
       </Box>
     </Box>
   ) : (
