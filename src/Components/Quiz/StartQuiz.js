@@ -1,4 +1,6 @@
 import React, { useState, useRef } from "react";
+import correctAudio from "../../sounds/correct.mp3";
+import wrongAudio from "../../sounds/wrong.mp3";
 
 import {
   Box,
@@ -27,10 +29,11 @@ export default function StartQuiz(props) {
   const currentPokemonId = pokemonIdList[currentQuestion];
   const { pokemon, isLoading } = useFetch(currentPokemonId);
 
-  // console.log("render");
-  console.log(answer);
   const handleSubmit = () => {
-    const isCorrect = inputField.current.value === pokemon.name;
+    const pokemonNameDash = pokemon.name.replace("-", "");
+    const inputValue = inputField.current.value.toLowerCase();
+    const isCorrect =
+      inputValue === pokemon.name || inputValue === pokemonNameDash;
     if (isCorrect) {
       setScore((prevScore) => prevScore + 1);
     }
@@ -45,6 +48,10 @@ export default function StartQuiz(props) {
     }
     setAnswer({ isSubmitted: false, isCorrect: false });
     setCurrentQuestion((prevQuestion) => prevQuestion + 1);
+  };
+
+  const playAudio = (audio) => {
+    new Audio(audio).play();
   };
 
   const hide = { display: "none" };
@@ -62,11 +69,19 @@ export default function StartQuiz(props) {
       }}
     >
       <Box className={styles.pokeCard}>
-        <img
-          className={styles.cardImage}
-          src={pokemon.image}
-          alt="Pokemon silhouette"
-        ></img>
+        {answer.isSubmitted ? (
+          <img
+            className={styles.cardImage}
+            src={pokemon.image}
+            alt="Pokemon image"
+          ></img>
+        ) : (
+          <img
+            className={styles.cardImageSiluette}
+            src={pokemon.image}
+            alt="Pokemon image"
+          ></img>
+        )}
 
         <Box
           sx={{
@@ -85,8 +100,9 @@ export default function StartQuiz(props) {
                 flexWrap: "wrap",
               }}
             >
+              {playAudio(correctAudio)};
               <span className={styles.bigText}>
-                <CheckIcon style={{ fontSize: "2rem" }} />
+                <CheckIcon style={{ fontSize: "3rem" }} />
                 GOOD JOB
               </span>
             </Box>
@@ -101,8 +117,9 @@ export default function StartQuiz(props) {
                 flexWrap: "wrap",
               }}
             >
+              {playAudio(wrongAudio)};
               <span className={styles.bigText}>
-                <ClearIcon style={{ fontSize: "2rem" }} />
+                <ClearIcon style={{ fontSize: "3rem" }} />
                 WRONG
               </span>
             </Box>
@@ -121,7 +138,7 @@ export default function StartQuiz(props) {
               variant="contained"
               onClick={handleSubmit}
             >
-              Submit
+              submit
             </Button>
             <Button
               sx={nextButtonVisibility}
@@ -130,9 +147,8 @@ export default function StartQuiz(props) {
             >
               Next Question
             </Button>
+            <p className="font">{pokemon.name}</p>
           </div>
-
-          <p className="font">{pokemon.name}</p>
         </Box>
       </Box>
     </Container>
