@@ -5,7 +5,6 @@ import { createTheme } from "@mui/material/styles";
 //     primary: {
 //       main: "#7CB9E8",
 //     },
-    
-    
+
 //   },
 // });

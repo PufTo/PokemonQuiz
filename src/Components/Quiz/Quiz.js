@@ -4,9 +4,12 @@ import EndQuiz from "./EndQuiz";
 import StartQuiz from "./StartQuiz";
 
 const getPokemonIdList = (numberOfPokemons = 10) => {
-  return Array(numberOfPokemons)
-    .fill()
-    .map(() => Math.round(Math.random() * 151));
+  const setOfPokemonId = new Set();
+  while (setOfPokemonId.size < numberOfPokemons) {
+    setOfPokemonId.add(Math.floor(Math.random() * 151) + 1);
+  }
+  const finalArray = Array.from(setOfPokemonId);
+  return finalArray;
 };
 
 export default function Quiz() {
