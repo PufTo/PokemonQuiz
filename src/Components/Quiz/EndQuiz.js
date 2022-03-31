@@ -1,5 +1,7 @@
 import React from "react";
-import { Box, Button } from "@mui/material";
+import { Button, Container } from "@mui/material";
+import SendIcon from '@mui/icons-material/Send';
+import styles from "./EndQuiz.module.css";
 
 export default function EndQuiz(props) {
   const { onStartQuiz, finalScore } = props;
@@ -9,11 +11,11 @@ export default function EndQuiz(props) {
   };
 
   return (
-    <Box>
-      <p>{`score: ${finalScore}`}</p>
-      <Button variant="contained" onClick={handleStartQuiz}>
-        Start a new Quiz!
+    <Container className={styles.fullHeight}>
+      <p className={styles.scoreEndScreen} >{`Score:${finalScore}`}</p>
+      <Button className={styles.buttonEndScreen} variant="contained" size="large" endIcon={<SendIcon/>} onClick={handleStartQuiz}>
+        Start a new Quiz
       </Button>
-    </Box>
+    </Container>
   );
 }
