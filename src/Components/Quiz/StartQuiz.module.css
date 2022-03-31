@@ -2,12 +2,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  margin-top: 2rem;
+  justify-content: space-between;
+  margin-top: 4rem;
   width: 26rem;
   height: 50rem;
   border-radius: 20px;
-  border: 10px solid white;
+  border: 1px solid white;
   padding-bottom: 0.5rem;
   background: none;
 }
@@ -15,7 +15,7 @@
 .cardImage {
   min-width: 34rem;
 }
-.cardImageSiluette {
+.cardImageSilhouette {
   width: 26rem;
   -webkit-filter: grayscale(100%) brightness(0);
   filter: grayscale(100%) brightness(0);
@@ -28,10 +28,16 @@
 }
 
 .bigText {
-  font-size: 1.8rem;
-  font-weight: bold;
+  font-size: 1.4rem;
+  font-weight: 500;
   display: flex;
   align-items: center;
   color: white;
   margin-bottom: 0.5rem;
+}
+
+.pokemonName {
+  font-family: Cinzel;
+  font-size: 2.2rem;
+  font-weight: bold;
 }
