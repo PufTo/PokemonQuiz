@@ -1,6 +1,14 @@
 import React, { useState, useRef } from "react";
+import correctAudio from "../../sounds/correct.mp3";
+import wrongAudio from "../../sounds/wrong.mp3";
 
-import { Box, Button, TextField, CircularProgress, Container } from "@mui/material";
+import {
+  Box,
+  Button,
+  TextField,
+  CircularProgress,
+  Container,
+} from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import "../../index.css";
@@ -21,11 +29,9 @@ export default function StartQuiz(props) {
   const currentPokemonId = pokemonIdList[currentQuestion];
   const { pokemon, isLoading } = useFetch(currentPokemonId);
 
-  // console.log("render");
-  console.log(answer);
   const handleSubmit = () => {
-
-    const isCorrect = inputField.current.value === pokemon.name;
+    let inputValue = inputField.current.value.toLowerCase();
+    const isCorrect = inputValue === pokemon.name;
     if (isCorrect) {
       setScore((prevScore) => prevScore + 1);
     }
@@ -42,6 +48,10 @@ export default function StartQuiz(props) {
     setCurrentQuestion((prevQuestion) => prevQuestion + 1);
   };
 
+  const playAudio = (audio) => {
+    new Audio(audio).play();
+  };
+
   const hide = { display: "none" };
   const show = { display: "inline-block" };
 
@@ -49,83 +59,95 @@ export default function StartQuiz(props) {
   const nextButtonVisibility = answer.isSubmitted ? show : hide;
 
   return !isLoading ? (
-    <Container sx={{
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-    }}>
+    <Container
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       <Box className={styles.pokeCard}>
-      <img className={styles.cardImage}src={pokemon.image} alt="Pokemon image"></img>
-      
-      <Box
-        sx={{
-          width:"80%",
-          display: "block",
-          alignItems: "center",
-          justifyContent: "center"
-        }}
-      >
-        {answer.isCorrect === true && answer.isSubmitted && (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexWrap: "wrap",
-            }}
-          >
-            
-            <span className={styles.bigText}>
-              <CheckIcon  style={{ fontSize: '2rem' }} />
-              GOOD JOB
-            </span>
-          </Box>
+        {answer.isSubmitted ? (
+          <img
+            className={styles.cardImage}
+            src={pokemon.image}
+            alt="Pokemon image"
+          ></img>
+        ) : (
+          <img
+            className={styles.cardImageSiluette}
+            src={pokemon.image}
+            alt="Pokemon image"
+          ></img>
         )}
 
-        {answer.isCorrect === false && answer.isSubmitted && (
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexWrap: "wrap",
-            }}
-          >
-            
-            <span className={styles.bigText}>
-              <ClearIcon style={{ fontSize: '2rem' }} />
-              WRONG
-            </span>
-          </Box>
-        )}
-        
-        <div className={styles.inputContainer}>
-          <TextField
-            inputRef={inputField}
-            hiddenLabel
-            id="filled-hidden-label-small"
-            variant="filled"
-            size="small"
-          />
-          <Button
-            sx={submitButtonVisibility}
-            variant="contained"
-            onClick={handleSubmit}
-          >
-            Submit
-          </Button>
-          <Button
-            sx={nextButtonVisibility}
-            variant="contained"
-            onClick={handleNextQuestion}
-          >
-            Next Question
-          </Button>
-        </div>
+        <Box
+          sx={{
+            width: "80%",
+            display: "block",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {answer.isCorrect === true && answer.isSubmitted && (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexWrap: "wrap",
+              }}
+            >
+              {playAudio(correctAudio)};
+              <span className={styles.bigText}>
+                <CheckIcon style={{ fontSize: "2rem" }} />
+                GOOD JOB
+              </span>
+            </Box>
+          )}
 
-        <p className="font">{pokemon.name}</p>
-          
-      </Box>
+          {answer.isCorrect === false && answer.isSubmitted && (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexWrap: "wrap",
+              }}
+            >
+              {playAudio(wrongAudio)};
+              <span className={styles.bigText}>
+                <ClearIcon style={{ fontSize: "2rem" }} />
+                WRONG
+              </span>
+            </Box>
+          )}
+
+          <div className={styles.inputContainer}>
+            <TextField
+              inputRef={inputField}
+              hiddenLabel
+              id="filled-hidden-label-small"
+              variant="filled"
+              size="small"
+            />
+            <Button
+              sx={submitButtonVisibility}
+              variant="contained"
+              onClick={handleSubmit}
+            >
+              Submit
+            </Button>
+            <Button
+              sx={nextButtonVisibility}
+              variant="contained"
+              onClick={handleNextQuestion}
+            >
+              Next Question
+            </Button>
+            <p className="font">{pokemon.name}</p>
+          </div>
+        </Box>
       </Box>
     </Container>
   ) : (
