@@ -30,8 +30,9 @@ export default function StartQuiz(props) {
   const { pokemon, isLoading } = useFetch(currentPokemonId);
 
   const handleSubmit = () => {
-    let inputValue = inputField.current.value.toLowerCase();
-    const isCorrect = inputValue === pokemon.name;
+    const pokemonNameDash = pokemon.name.replace("-", "");
+    const inputValue = inputField.current.value.toLowerCase();
+    const isCorrect = (inputValue === pokemon.name || inputValue === pokemonNameDash);
     if (isCorrect) {
       setScore((prevScore) => prevScore + 1);
     }
@@ -100,7 +101,7 @@ export default function StartQuiz(props) {
             >
               {playAudio(correctAudio)};
               <span className={styles.bigText}>
-                <CheckIcon style={{ fontSize: "2rem" }} />
+                <CheckIcon style={{ fontSize: "3rem" }} />
                 GOOD JOB
               </span>
             </Box>
@@ -117,7 +118,7 @@ export default function StartQuiz(props) {
             >
               {playAudio(wrongAudio)};
               <span className={styles.bigText}>
-                <ClearIcon style={{ fontSize: "2rem" }} />
+                <ClearIcon style={{ fontSize: "3rem" }} />
                 WRONG
               </span>
             </Box>
@@ -136,7 +137,7 @@ export default function StartQuiz(props) {
               variant="contained"
               onClick={handleSubmit}
             >
-              Submit
+              submit
             </Button>
             <Button
               sx={nextButtonVisibility}
