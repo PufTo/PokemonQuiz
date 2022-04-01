@@ -17,7 +17,6 @@ const fetchImage = async (pokemonId) => {
 
   const result = await response.blob();
   const resultFinal = URL.createObjectURL(result);
-  console.log(resultFinal);
 
   return resultFinal;
 };
@@ -38,7 +37,6 @@ const useFetch = (pokemonId) => {
       fetchImage(pokemonId),
     ]);
     const pokemonInfo = { name: pokemonName, image: pokemonImage };
-    console.log(pokemonInfo);
     setPokemon(pokemonInfo);
     setIsLoading(false);
   }, [pokemonId]);

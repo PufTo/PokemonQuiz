@@ -15,6 +15,11 @@ import "../../index.css";
 
 import useFetch from "../../hooks/use-fetch";
 import styles from "./StartQuiz.module.css";
+import { borderRadius } from "@mui/system";
+
+const playAudio = (audio) => {
+  new Audio(audio).play();
+};
 
 export default function StartQuiz(props) {
   const { pokemonIdList, onSubmit } = props;
@@ -30,12 +35,22 @@ export default function StartQuiz(props) {
   const { pokemon, isLoading } = useFetch(currentPokemonId);
 
   const handleSubmit = () => {
-    const pokemonNameDash = pokemon.name.replace("-", "");
-    const inputValue = inputField.current.value.toLowerCase();
-    const isCorrect = (inputValue === pokemon.name || inputValue === pokemonNameDash);
+    console.log(inputField.current.value);
+    if (!inputField.current.value) {
+      inputField.current.error = true;
+      return;
+    }
+    const pokemonNameNoDash = pokemon.name.replace("-", "");
+    const inputValue = inputField.current.value.toLowerCase().trim();
+    const isCorrect =
+      inputValue === pokemon.name || inputValue === pokemonNameNoDash;
     if (isCorrect) {
       setScore((prevScore) => prevScore + 1);
+      playAudio(correctAudio);
     }
+    console.log();
+    inputField.current.readOnly = true;
+    playAudio(wrongAudio);
     setAnswer({ isCorrect: isCorrect, isSubmitted: true });
   };
 
@@ -45,12 +60,10 @@ export default function StartQuiz(props) {
 
       return;
     }
+    inputField.current.readOnly = false;
+    inputField.current.value = "";
     setAnswer({ isSubmitted: false, isCorrect: false });
     setCurrentQuestion((prevQuestion) => prevQuestion + 1);
-  };
-
-  const playAudio = (audio) => {
-    new Audio(audio).play();
   };
 
   const hide = { display: "none" };
@@ -59,7 +72,37 @@ export default function StartQuiz(props) {
   const submitButtonVisibility = answer.isSubmitted ? hide : show;
   const nextButtonVisibility = answer.isSubmitted ? show : hide;
 
-  return !isLoading ? (
+  const questionFeedback = answer.isCorrect ? (
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexWrap: "wrap",
+      }}
+    >
+      <span className={styles.bigText}>
+        <CheckIcon style={{ fontSize: "3rem" }} />
+        CORRECT
+      </span>
+    </Box>
+  ) : (
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexWrap: "wrap",
+      }}
+    >
+      <span className={styles.bigText}>
+        <ClearIcon style={{ fontSize: "3rem" }} />
+        WRONG
+      </span>
+    </Box>
+  );
+
+  return (
     <Container
       sx={{
         display: "flex",
@@ -68,90 +111,120 @@ export default function StartQuiz(props) {
       }}
     >
       <Box className={styles.pokeCard}>
-        {answer.isSubmitted ? (
-          <img
-            className={styles.cardImage}
-            src={pokemon.image}
-            alt="Pokemon image"
-          ></img>
+        {isLoading ? (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100%",
+            }}
+          >
+            <CircularProgress />
+          </Box>
         ) : (
-          <img
-            className={styles.cardImageSiluette}
-            src={pokemon.image}
-            alt="Pokemon image"
-          ></img>
+          <>
+            <Container
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "visible",
+                width: "26rem",
+                height: "26rem",
+              }}
+            >
+              {answer.isSubmitted ? (
+                <img
+                  className={styles.cardImage}
+                  src={pokemon.image}
+                  alt="Pokemon image"
+                ></img>
+              ) : (
+                <img
+                  className={styles.cardImageSilhouette}
+                  src={pokemon.image}
+                  alt="Pokemon image"
+                ></img>
+              )}
+            </Container>
+            {answer.isSubmitted && (
+              <p className={styles.pokemonName}>{pokemon.name}</p>
+            )}
+            {!answer.isSubmitted && <p className={styles.pokemonName}>? ? ?</p>}
+            <Box
+              sx={{
+                width: "80%",
+                display: "block",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {answer.isSubmitted && questionFeedback}
+              {!answer.isSubmitted && (
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <span className={styles.bigText} style={{ height: "3rem" }}>
+                    Guess the pokemon!
+                    {/* <ClearIcon
+                      style={{ fontSize: "3rem", visibility: "hidden" }}
+                    /> */}
+                  </span>
+                </Box>
+              )}
+
+              <div className={styles.inputContainer}>
+                <TextField
+                  inputRef={inputField}
+                  autoComplete="off"
+                  hiddenLabel
+                  id="filled-hidden-label-small"
+                  variant="filled"
+                  size="small"
+                  InputProps={{
+                    disableUnderline: true,
+                    style: { fontSize: "1.6rem" },
+                  }}
+                  sx={{
+                    marginBottom: "1rem",
+                    borderRadius: "10px",
+                  }}
+                />
+                <Button
+                  sx={{
+                    ...submitButtonVisibility,
+                    borderRadius: "10px",
+                    marginBottom: "2rem",
+                    fontSize: "1.6rem",
+                  }}
+                  variant="outlined"
+                  onClick={handleSubmit}
+                >
+                  submit
+                </Button>
+                <Button
+                  sx={{
+                    ...nextButtonVisibility,
+                    borderRadius: "10px",
+                    marginBottom: "2rem",
+                    fontSize: "1.6rem",
+                  }}
+                  variant="outlined"
+                  onClick={handleNextQuestion}
+                >
+                  Next Question
+                </Button>
+              </div>
+            </Box>
+          </>
         )}
-
-        <Box
-          sx={{
-            width: "80%",
-            display: "block",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {answer.isCorrect === true && answer.isSubmitted && (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexWrap: "wrap",
-              }}
-            >
-              {playAudio(correctAudio)};
-              <span className={styles.bigText}>
-                <CheckIcon style={{ fontSize: "3rem" }} />
-                GOOD JOB
-              </span>
-            </Box>
-          )}
-
-          {answer.isCorrect === false && answer.isSubmitted && (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexWrap: "wrap",
-              }}
-            >
-              {playAudio(wrongAudio)};
-              <span className={styles.bigText}>
-                <ClearIcon style={{ fontSize: "3rem" }} />
-                WRONG
-              </span>
-            </Box>
-          )}
-
-          <div className={styles.inputContainer}>
-            <TextField
-              inputRef={inputField}
-              hiddenLabel
-              id="filled-hidden-label-small"
-              variant="filled"
-              size="small"
-            />
-            <Button
-              sx={submitButtonVisibility}
-              variant="contained"
-              onClick={handleSubmit}
-            >
-              submit
-            </Button>
-            <Button
-              sx={nextButtonVisibility}
-              variant="contained"
-              onClick={handleNextQuestion}
-            >
-              Next Question
-            </Button>
-            <p className="font">{pokemon.name}</p>
-          </div>
-        </Box>
       </Box>
     </Container>
-  ) : (
-    <CircularProgress />
   );
 }
