@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, Container } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
+
 import styles from "./EndQuiz.module.css";
 
 export default function EndQuiz(props) {

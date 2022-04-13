@@ -1,7 +1,4 @@
 import React, { useState, useRef } from "react";
-import correctAudio from "../../sounds/correct.mp3";
-import wrongAudio from "../../sounds/wrong.mp3";
-
 import {
   Box,
   Button,
@@ -11,11 +8,20 @@ import {
 } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
-import "../../index.css";
-
 import useFetch from "../../hooks/use-fetch";
 import styles from "./StartQuiz.module.css";
 import { borderRadius } from "@mui/system";
+import { motion, useCycle } from "framer-motion";
+
+import "../../index.css";
+import correctAudio from "../../sounds/correct.mp3";
+import wrongAudio from "../../sounds/wrong.mp3";
+
+const motionVariants = {
+  initial: { scale: 0.7, filter: "brightness(0)" },
+  shadow: { scale: 1, filter: "brightness(0)" },
+  reveal: { scale: 1.3, filter: "brightness(100%) grayscale(0)", opacity: 1 },
+};
 
 const playAudio = (audio) => {
   new Audio(audio).play();
@@ -23,7 +29,10 @@ const playAudio = (audio) => {
 
 export default function StartQuiz(props) {
   const { pokemonIdList, onSubmit } = props;
-
+  const [imageAnimation, cycleImageAnimation] = useCycle(
+    motionVariants.shadow,
+    motionVariants.reveal
+  );
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [answer, setAnswer] = useState({
@@ -47,10 +56,12 @@ export default function StartQuiz(props) {
     if (isCorrect) {
       setScore((prevScore) => prevScore + 1);
       playAudio(correctAudio);
+    } else {
+      playAudio(wrongAudio);
     }
     console.log();
     inputField.current.readOnly = true;
-    playAudio(wrongAudio);
+    cycleImageAnimation();
     setAnswer({ isCorrect: isCorrect, isSubmitted: true });
   };
 
@@ -64,6 +75,7 @@ export default function StartQuiz(props) {
     inputField.current.value = "";
     setAnswer({ isSubmitted: false, isCorrect: false });
     setCurrentQuestion((prevQuestion) => prevQuestion + 1);
+    cycleImageAnimation();
   };
 
   const hide = { display: "none" };
@@ -134,19 +146,15 @@ export default function StartQuiz(props) {
                 height: "26rem",
               }}
             >
-              {answer.isSubmitted ? (
-                <img
-                  className={styles.cardImage}
-                  src={pokemon.image}
-                  alt="Pokemon image"
-                ></img>
-              ) : (
-                <img
-                  className={styles.cardImageSilhouette}
-                  src={pokemon.image}
-                  alt="Pokemon image"
-                ></img>
-              )}
+              <motion.img
+                variants={motionVariants}
+                initial="initial"
+                animate={imageAnimation}
+                transition={{ duration: 1, times: [0, 0.8, 1] }}
+                className={styles.cardImageSilhouette}
+                src={pokemon.image}
+                alt="Pokemon image reveal"
+              />
             </Container>
             {answer.isSubmitted && (
               <p className={styles.pokemonName}>{pokemon.name}</p>
@@ -189,7 +197,7 @@ export default function StartQuiz(props) {
                   size="small"
                   InputProps={{
                     disableUnderline: true,
-                    style: { fontSize: "1.6rem" },
+                    style: { fontSize: "1.6rem", color: "#dee2e6" },
                   }}
                   sx={{
                     marginBottom: "1rem",
