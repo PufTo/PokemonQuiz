@@ -17,7 +17,7 @@
 }
 
 .pokeball:hover {
-  animation: wobble 5s infinite;
+  animation: wobble 3s infinite;
   cursor: pointer;
 }
 
@@ -94,6 +94,7 @@
   20%,
   24%,
   28%,
+  40%,
   80%,
   84%,
   88%,
@@ -104,14 +105,16 @@
   }
 
   12%,
+  32%,
   82%,
   90% {
-    transform: rotate(4deg);
+    transform: rotate(6deg);
   }
 
   16%,
+  36%,
   86%,
   94% {
-    transform: rotate(-4deg);
+    transform: rotate(-6deg);
   }
 }
